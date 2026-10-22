@@ -1,0 +1,202 @@
+{% load static arena_tags %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f8fa">
+<meta name="description" content="ARVEXA 2026 — a digital competition conducted by Quadrafroyn Solutions.">
+<title>ARVEXA 2026 · {{ page|upper }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="{{ page }}">
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+
+<header class="site-header">
+  <a class="wordmark" href="/" aria-label="ARVEXA 2026 home">
+    <span class="wordmark-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span>ARVEXA <b>2026</b></span>
+  </a>
+  <nav class="main-nav">
+    <a href="/">Home</a>
+    {% if request.session.participant_token %}<a href="/arenas/">Arenas</a>{% endif %}
+    <a href="/organizer/">Organizer</a>
+  </nav>
+</header>
+
+<main class="shell">
+{% if page != 'home' and page != 'organizer_dashboard' and page != 'organizer_participant' and page != 'organizer_submission' and page != 'organizer_attempt' %}
+  <a class="back-link" href="javascript:history.back()">Back</a>
+{% endif %}
+{% if messages %}{% for message in messages %}<div class="toast success">{{ message }}</div>{% endfor %}{% endif %}
+{% if error %}<div class="toast error">{{ error }}</div>{% endif %}
+
+{% if page == 'home' %}
+<section class="home-hero">
+  <div class="hero-copy reveal">
+    <div class="kicker">QUADRAFROYN SOLUTIONS · DIGITAL CHALLENGE 2026</div>
+    <h1>ARVEXA <em>2026</em></h1>
+    <p class="hero-lede">A precision-built online arena for analytical thinking, digital craft and meaningful innovation.</p>
+    <div class="hero-meta">
+      <span>100% ONLINE</span><span>23 OCTOBER 2026</span><span>INDIVIDUAL & TEAM CHALLENGES</span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/join/">Enter the arena</a>
+      <a class="btn btn-quiet" href="#challenges">Explore challenges</a>
+    </div>
+    <div class="organizer-line">Conducted by <strong>Quadrafroyn Solutions</strong></div>
+  </div>
+  <div class="hero-poster reveal">
+    <div class="poster-frame"><img src="{% static 'poster.jpg' %}" alt="ARVEXA 2026 official poster"></div>
+    <div class="poster-caption"><span>OFFICIAL EVENT POSTER</span><span>ARVEXA / 26</span></div>
+  </div>
+</section>
+
+<section class="section-block" id="challenges">
+  <div class="section-head"><div><div class="kicker">THE PROGRAM</div><h2>Three arenas. One standard.</h2></div><p>Every arena is designed to reward clear thinking, originality and execution rather than surface-level presentation.</p></div>
+  <div class="challenge-grid">
+    <a class="challenge-card" href="/join/"><span class="index">01</span><span class="micro">COGNITION ARENA</span><h3>APTIQ</h3><p>Forty high-difficulty questions spanning AI literacy, reasoning, quantitative analysis and decision-making.</p><span class="card-link">View arena</span></a>
+    <a class="challenge-card" href="/join/"><span class="index">02</span><span class="micro">DESIGN ARENA</span><h3>WEBPHOBIA</h3><p>A random creative brief, a responsive build and a presentation-ready digital experience.</p><span class="card-link">View arena</span></a>
+    <a class="challenge-card" href="/join/"><span class="index">03</span><span class="micro">INNOVATION ARENA</span><h3>PROBLEM TO SOLUTION</h3><p>Turn a real-world theme into a defensible idea, prototype, architecture and evidence.</p><span class="card-link">View arena</span></a>
+  </div>
+</section>
+
+<section class="split-panel">
+  <div><div class="kicker">DESIGNED FOR FOCUS</div><h2>Less noise. More signal.</h2><p>ARVEXA is built as a competition portal first: restrained visual language, deliberate motion, strong hierarchy and fast access to every task.</p></div>
+  <div class="principles"><div><b>01</b><span>Original work</span></div><div><b>02</b><span>Fair play</span></div><div><b>03</b><span>Evidence over claims</span></div><div><b>04</b><span>Organizer review</span></div></div>
+</section>
+
+<section class="section-block rules-block">
+  <div class="kicker">FAIR PLAY</div><h2>Competition principles</h2>
+  <div class="rules-grid">
+    <p>Use accurate participant details and your own work.</p><p>APTIQ activity is monitored for review signals such as tab changes and focus loss.</p>
+    <p>Respect file formats, deadlines and team limits shown in each arena.</p><p>Organizer decisions, submission timestamps and recorded evidence govern review.</p>
+  </div>
+</section>
+
+{% elif page == 'join' %}
+<section class="auth-layout">
+  <div class="auth-copy"><div class="kicker">IDENTITY / 00</div><h1>Enter the <em>arena.</em></h1><p>Register once, then use your participant dashboard to move between all three challenges.</p><div class="auth-note"><span>01</span><div><strong>One identity</strong><small>Your email identifies your competition record.</small></div></div><div class="auth-note"><span>02</span><div><strong>One dashboard</strong><small>Your progress and submissions remain in one place.</small></div></div></div>
+  <section class="form-card">
+    <div class="form-head"><span>PARTICIPANT ACCESS</span><b>ARVEXA / 26</b></div>
+    <form method="post">{% csrf_token %}
+      <label>Full name *<input name="name" required maxlength="140" autocomplete="name" placeholder="Enter your full name"></label>
+      <label>Email address *<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+      <label>Team name <span class="optional">optional</span><input name="team" maxlength="140" placeholder="Leave blank for individual participation"></label>
+      <button class="btn btn-primary full">Continue to arenas</button>
+    </form>
+    <p class="form-foot">By continuing, you confirm that the information provided is accurate and that you will follow the published fair-play rules.</p>
+  </section>
+</section>
+
+{% elif page == 'arenas' %}
+<section class="dashboard-head"><div><div class="kicker">PARTICIPANT CONSOLE</div><h1>Welcome, <em>{{ p.name|truncatechars:28 }}</em></h1><p>Choose a challenge. Your competition record is stored server-side.</p></div><a class="btn btn-quiet" href="/logout/">Sign out</a></section>
+<div class="status-strip"><div><span>IDENTITY</span><strong>{{ p.email }}</strong></div><div><span>LAST ACTIVE</span><strong>{{ p.last_seen|date:"d M Y · H:i" }}</strong></div><div><span>EVENT</span><strong>23 OCT 2026</strong></div></div>
+<div class="arena-grid">
+  <a class="arena-card arena-violet" href="/aptiq/"><div class="arena-top"><span>01 / COGNITION</span><span>{% if attempt %}COMPLETED{% else %}OPEN{% endif %}</span></div><h2>APTIQ</h2><p>40 advanced questions. AI awareness, logic, quantitative reasoning and analytical judgement.</p><div class="arena-bottom"><span>{% if attempt %}{{ attempt.final_score }}/40 recorded{% else %}50 min · individual{% endif %}</span><b>Open arena</b></div></a>
+  <a class="arena-card arena-blue" href="/webphobia/"><div class="arena-top"><span>02 / DESIGN</span><span>{% if 'web' in submitted %}SUBMITTED{% else %}OPEN{% endif %}</span></div><h2>WEBPHOBIA</h2><p>Spin one of ten briefs, create a polished responsive website and submit evidence.</p><div class="arena-bottom"><span>10 briefs · team up to 2</span><b>Open arena</b></div></a>
+  <a class="arena-card arena-green" href="/problem-to-solution/"><div class="arena-top"><span>03 / INNOVATION</span><span>{% if 'pts2' in submitted %}SUBMITTED{% else %}OPEN{% endif %}</span></div><h2>PROBLEM TO SOLUTION</h2><p>Choose a real-world theme and translate it into a defensible solution package.</p><div class="arena-bottom"><span>Idea + prototype evidence</span><b>Open arena</b></div></a>
+</div>
+
+{% elif page == 'aptiq' %}
+<section class="arena-intro"><div class="kicker">01 / COGNITION ARENA</div><h1>APT<em>IQ</em></h1><p>Advanced assessment for AI literacy, reasoning under constraints, quantitative judgement and pattern analysis.</p><div class="metric-row"><span>40 QUESTIONS</span><span>50 MINUTES</span><span>2 ROUNDS</span><span>SERVER-GRADED</span></div></section>
+<section class="feature-band"><div><span>ROUND 01</span><h3>AI awareness</h3><p>15 demanding questions on model behaviour, evaluation, causal reasoning, privacy, retrieval and modern ML systems.</p></div><div><span>ROUND 02</span><h3>Logic & aptitude</h3><p>25 non-repetitive problems covering deduction, probability, number theory, rates, sequences and quantitative reasoning.</p></div></section>
+<section class="content-card"><div class="kicker">ASSESSMENT PROTOCOL</div><h2>Designed to reward reasoning.</h2><ol><li>One individual attempt with a shared 50-minute timer.</li><li>Answers autosave locally and to the server while the assessment is active.</li><li>Tab visibility, focus changes and other browser-level signals may be recorded for organizer review.</li><li>One mark is awarded per correct response. The organizer portal can review and override marks when required.</li><li>Submit before the timer ends. Submission is final.</li></ol>
+<form action="/aptiq/start/" method="post">{% csrf_token %}<label class="consent"><input type="checkbox" name="agree" required> I have read and accept the APTIQ assessment protocol.</label><button class="btn btn-primary">Start assessment</button></form></section>
+
+{% elif page == 'test_unavailable' %}
+<section class="empty-state"><div class="kicker">ASSESSMENT CONFIGURATION</div><h1>One final setup step.</h1><p>{{ count }} of 40 questions are currently configured. Run the included question seed command before opening the live assessment.</p><code>python manage.py seed_questions</code></section>
+
+{% elif page == 'test' %}
+<section class="exam-shell">
+  <div class="exam-header"><div><div class="kicker">ARVEXA / LIVE ASSESSMENT</div><h2>APTIQ <span id="roundLabel"></span></h2></div><div class="exam-timer" id="clock">50:00</div></div>
+  <div class="exam-progress"><div id="bar"></div></div>
+  <div class="exam-layout">
+    <section class="question-card"><div id="counter" class="kicker"></div><h2 id="question"></h2><div id="choices"></div><div class="exam-actions"><button class="btn btn-quiet" onclick="move(-1)">Previous</button><button class="btn btn-quiet" onclick="move(1)">Next</button><button class="btn btn-primary" onclick="finishTest()">Submit assessment</button></div></section>
+    <aside class="navigator-card"><div class="nav-head"><span>QUESTION MAP</span><b id="answered">0 / 40</b></div><div id="palette"></div><p id="warning" class="exam-warning"></p><button id="reviewCurrent" class="btn btn-quiet full" type="button" onclick="toggleReview()">Mark for review</button></aside>
+  </div>
+</section>
+<input type="hidden" id="csrfvalue" value="{{ csrf_token }}">
+<script>window.examData={questions:{{ questions|safe }},answers:{{ answers|safe }},remaining:{{ remaining }}};</script>
+
+{% elif page == 'web' %}
+<section class="arena-intro"><div class="kicker">02 / DESIGN ARENA</div><h1>WEB<em>PHOBIA</em></h1><p>One random brief. One focused build. Create a responsive digital experience that feels deliberate, useful and presentation-ready.</p><div class="metric-row"><span>10 CREATIVE BRIEFS</span><span>TEAM UP TO 2</span><span>VIDEO + SOURCE ZIP</span></div></section>
+<input type="hidden" id="csrfvalue" value="{{ csrf_token }}">
+<script>window.assignedTopic="{{ assigned_topic|default:''|escapejs }}";</script><section class="web-hero-grid"><div class="wheel-stage"><div class="wheel-pointer"></div><div id="wheel" class="wheel"></div><div class="wheel-core">ARVEXA<br><small>CREATIVE BRIEF</small></div></div><div class="brief-panel"><div class="kicker">RANDOM ASSIGNMENT</div><h2 id="topicResult">Awaiting your brief</h2><p id="topicSupport">Spin once. The selected brief stays locked for this browser session.</p><button id="spin" class="btn btn-primary" onclick="spinWheel()">Spin the wheel</button><div class="brief-actions"><button class="btn btn-quiet" onclick="copyTopic()">Copy brief</button><a id="websubmit" class="btn btn-quiet disabled-link" href="/webphobia/submit/" aria-disabled="true" tabindex="-1">Submit work</a></div><div id="assignmentPulse" class="assignment-pulse" aria-live="polite"></div></div></section>
+<section class="brief-grid">{% for t in topics %}<div><span>{{ forloop.counter|stringformat:"02d" }}</span><p>{{ t }}</p></div>{% endfor %}</section>
+<section class="content-card"><div class="kicker">DELIVERABLE STANDARD</div><h2>Build for the brief, not for the screenshot.</h2><div class="two-col-copy"><p>Evaluation considers information architecture, interaction quality, responsive behaviour, originality, accessibility and polish.</p><p>Submit a screen recording and a source ZIP. Third-party assets are permitted when appropriately credited.</p></div></section>
+
+{% elif page == 'submit_web' %}
+<section class="form-page"><div class="kicker">WEBPHOBIA / SUBMISSION</div><h1>Submit your <em>build.</em></h1><p>Lock the assigned brief and attach the evidence the organizer needs to review your work.</p><section class="form-card wide"><form method="post" enctype="multipart/form-data">{% csrf_token %}
+<label>Assigned brief *<select name="topic" required><option value="">Select your assigned brief</option>{% for t in topics %}<option value="{{ t }}" {% if t == topic %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></label>
+<label>Project overview <span class="optional">optional</span><textarea name="description" rows="6" placeholder="Describe the product, key interaction and contribution split."></textarea></label>
+<div class="upload-grid"><label>Screen recording *<input type="file" name="video" accept=".mp4,.webm,.mov" required><small>MP4, WebM or MOV · max 150 MB</small></label><label>Source code ZIP *<input type="file" name="code" accept=".zip" required><small>ZIP · max 40 MB</small></label></div>
+<button class="btn btn-primary">Submit Webphobia entry</button></form></section></section>
+
+{% elif page == 'pts' %}
+<section class="pts-desktop">
+  <div class="pts-hero-copy"><div class="kicker">03 / INNOVATION ARENA</div><h1>PROBLEM TO <em>SOLUTION.</em></h1><p>Take a meaningful problem from a real-world domain and turn it into a solution that can survive scrutiny.</p><div class="metric-row"><span>ONLINE</span><span>INDIVIDUAL OR TEAM UP TO 4</span><span>IDEA → PROTOTYPE</span></div><a class="btn btn-primary" href="/problem-to-solution/idea/">Choose a theme</a></div>
+  <div class="pts-image"><img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1100&q=85" alt="Team collaborating around a table"></div>
+</section>
+<section class="journey">
+  <div class="journey-card"><span>01</span><h3>Frame the problem</h3><p>Select one theme and explain the users, problem, constraints, proposed direction and expected impact.</p></div>
+  <div class="journey-card"><span>02</span><h3>Build the proof</h3><p>Translate the idea into a prototype and support it with a clear system architecture and implementation evidence.</p></div>
+  <div class="journey-card"><span>03</span><h3>Defend the solution</h3><p>Organizers can review your evidence, score the submission and leave structured feedback in the organizer portal.</p></div>
+</section>
+<section class="visual-strip"><div><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85" alt="Product planning workspace"></div><div><div class="kicker">THE STANDARD</div><h2>From concept to evidence.</h2><p>No shortlist gate. Once the idea is submitted, the participant can proceed directly to the final evidence package. Organizer review happens after submission.</p><a class="btn btn-quiet" href="/problem-to-solution/idea/">Start the journey</a></div></section>
+
+{% elif page == 'idea' %}
+<section class="form-page desktop-form"><div class="kicker">PROBLEM TO SOLUTION / 01</div><h1>Select one <em>theme.</em></h1><p>Choose the problem domain that will anchor your solution. There is no shortlist stage in this flow.</p>
+<div class="theme-grid">{% for code,theme in themes %}<article><span>{{ code }}</span><h3>{{ theme }}</h3><p>Define the user, pain point, constraints, novelty, feasibility and expected impact.</p></article>{% endfor %}</div>
+<section class="form-card wide"><form method="post" enctype="multipart/form-data">{% csrf_token %}<label>Official theme *<select name="topic" required><option value="">Choose one theme</option>{% for code,theme in themes %}<option value="{{ code }} · {{ theme }}">{{ code }} · {{ theme }}</option>{% endfor %}</select></label><label>Problem + solution brief *<textarea name="description" rows="7" required placeholder="Problem, users, solution, novelty, feasibility, impact and key assumptions."></textarea></label><label>Idea presentation *<input type="file" name="ppt" accept=".ppt,.pptx,.pdf" required><small>PPT, PPTX or PDF · max 30 MB</small></label><button class="btn btn-primary">Submit idea and continue</button></form></section></section>
+
+{% elif page == 'prototype' %}
+<section class="form-page desktop-form"><div class="kicker">PROBLEM TO SOLUTION / FINAL EVIDENCE</div><h1>Prove your <em>solution.</em></h1><div class="selected-theme"><span>SELECTED THEME</span><strong>{{ idea.topic }}</strong></div><p class="lead-note">Your idea is already recorded. Continue directly to the final evidence package; organizer review does not block this step.</p>
+<section class="evidence-layout"><div class="evidence-copy"><div class="kicker">EVIDENCE PACKAGE</div><h2>Make the implementation inspectable.</h2><p>Upload a prototype artifact, a system architecture document and a solution / implementation document. The organizer can review each file individually and score the submission.</p><div class="evidence-points"><span>01 / Prototype</span><span>02 / Architecture</span><span>03 / Solution evidence</span></div></div>
+<section class="form-card"><form method="post" enctype="multipart/form-data">{% csrf_token %}<label>Prototype artifact *<input name="prototype" type="file" required><small>Max 75 MB</small></label><label>System architecture *<input name="architecture" type="file" required><small>Max 30 MB</small></label><label>Solution / implementation evidence *<input name="solution" type="file" required><small>Max 30 MB</small></label><label>Implementation notes <span class="optional">optional</span><textarea name="description" rows="5" placeholder="Repository link, deployment notes, test notes or important assumptions."></textarea></label><button class="btn btn-primary full">Submit final evidence</button></form></section></div></section>
+
+{% elif page == 'complete' %}
+<section class="completion"><div class="completion-mark">A</div><div class="kicker">ARVEXA / PARTICIPATION COMPLETE</div><h1>Built. Solved. <em>Submitted.</em></h1><p>Your entries are stored in the competition portal. Organizer review and announcements will follow the event process.</p><a class="btn btn-primary" href="/arenas/">Return to my arenas</a></section>
+
+{% elif page == 'error' %}
+<section class="empty-state"><div class="kicker">REQUEST NOT COMPLETED</div><h1>We need one more step.</h1><p>{{ error }}</p><a class="btn btn-primary" href="/arenas/">Return to arenas</a></section>
+
+{% elif page == 'organizer_login' %}
+<section class="organizer-login"><div class="login-visual"><div class="kicker">ARVEXA / ORGANIZER CONTROL</div><h1>Mission <em>control.</em></h1><p>A dedicated organizer workspace for participant records, submissions, assessment review and competition monitoring.</p><div class="control-lines"><span>PARTICIPANT MONITORING</span><span>ASSESSMENT REVIEW</span><span>SUBMISSION EVIDENCE</span></div></div><section class="form-card organizer-card"><div class="form-head"><span>ORGANIZER SIGN IN</span><b>PRIVATE PORTAL</b></div><form method="post">{% csrf_token %}<label>Email address<input name="email" type="email" autocomplete="username" required placeholder="Organizer email"></label><label>Password<input name="password" type="password" autocomplete="current-password" required placeholder="Organizer password"></label><button class="btn btn-primary full">Sign in to control room</button></form><p class="form-foot">This portal is separate from Django administration and is intentionally scoped to competition operations.</p></section></section>
+
+{% elif page == 'organizer_dashboard' %}
+<section class="admin-top"><div><div class="kicker">ARVEXA / ORGANIZER CONTROL ROOM</div><h1>Competition <em>overview.</em></h1><p>Monitor participants, review assessment signals and evaluate submitted evidence from one workspace.</p></div><a class="btn btn-quiet" href="/organizer/logout/">Sign out</a></section>
+<div class="admin-tools"><form method="get" action="/organizer/dashboard/" class="admin-search"><input name="q" value="{{ query }}" placeholder="Search participant, email or team"><button class="btn btn-quiet">Search</button></form><a class="btn btn-primary" href="/organizer/export/participants.csv">Export participant CSV</a></div>
+<div class="admin-stats"><div><span>PARTICIPANTS</span><strong>{{ stats.participants }}</strong></div><div><span>APTIQ COMPLETED</span><strong>{{ stats.aptiq_completed }}</strong></div><div><span>SUBMISSIONS</span><strong>{{ stats.submissions }}</strong></div><div class="stat-alert"><span>MONITOR FLAGS</span><strong>{{ stats.flagged }}</strong></div></div>
+<section class="admin-grid">
+  <div class="admin-panel wide-panel"><div class="admin-panel-head"><div><span>PARTICIPANT REGISTER</span><h2>Every participant</h2></div><span class="count">{{ stats.participants }}</span></div><div class="table-wrap"><table><thead><tr><th>Participant</th><th>Team</th><th>Last active</th><th>Signals</th><th></th></tr></thead><tbody>{% for item in participants %}<tr><td><strong>{{ item.name }}</strong><small>{{ item.email }}</small></td><td>{{ item.team|default:"Individual" }}</td><td>{{ item.last_seen|date:"d M · H:i" }}</td><td><span class="signal">{{ item.monitor_events.count }}</span></td><td><a class="table-link" href="/organizer/participant/{{ item.id }}/">Open record</a></td></tr>{% empty %}<tr><td colspan="5">No participants yet.</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="admin-panel"><div class="admin-panel-head"><div><span>RECENT SIGNALS</span><h2>Fair-play monitor</h2></div></div><div class="event-list">{% for e in recent_events %}<a href="/organizer/participant/{{ e.participant.id }}/"><span class="event-dot"></span><div><strong>{{ e.participant.name }} · {{ e.get_event_type_display }}</strong><small>{{ e.detail|default:"Monitor event recorded" }}</small></div><time>{{ e.created|date:"d M · H:i" }}</time></a>{% empty %}<p>No monitor signals yet.</p>{% endfor %}</div></div>
+</section>
+<section class="admin-panel"><div class="admin-panel-head"><div><span>ASSESSMENT QUEUE</span><h2>APTIQ attempts</h2></div></div><div class="table-wrap"><table><thead><tr><th>Participant</th><th>Started</th><th>Score</th><th>Flags</th><th></th></tr></thead><tbody>{% for a in attempts %}<tr><td><strong>{{ a.participant.name }}</strong><small>{{ a.participant.email }}</small></td><td>{{ a.started|date:"d M · H:i" }}</td><td><strong>{{ a.final_score }}/40</strong></td><td><span class="{% if a.violations %}risk-high{% else %}risk-low{% endif %}">{{ a.violations }}</span></td><td><a class="table-link" href="/organizer/attempt/{{ a.id }}/">Review answers</a></td></tr>{% empty %}<tr><td colspan="5">No attempts yet.</td></tr>{% endfor %}</tbody></table></div></section>
+
+{% elif page == 'organizer_participant' %}
+<section class="admin-top compact"><div><a class="table-link" href="/organizer/dashboard/">Back to control room</a><div class="kicker">PARTICIPANT RECORD</div><h1>{{ participant.name }}</h1><p>{{ participant.email }} · {{ participant.team|default:"Individual" }}</p></div></section>
+<div class="record-grid"><div class="admin-panel"><span>PROFILE</span><h2>Identity</h2><dl><dt>Name</dt><dd>{{ participant.name }}</dd><dt>Email</dt><dd>{{ participant.email }}</dd><dt>Team</dt><dd>{{ participant.team|default:"Individual" }}</dd><dt>Joined</dt><dd>{{ participant.created|date:"d M Y · H:i" }}</dd><dt>Last active</dt><dd>{{ participant.last_seen|date:"d M Y · H:i" }}</dd></dl></div>
+<div class="admin-panel"><span>APTIQ</span><h2>Assessment</h2>{% for a in attempts %}<div class="mini-record"><strong>{{ a.final_score }}/40</strong><span>{{ a.violations }} monitor flags</span><a class="table-link" href="/organizer/attempt/{{ a.id }}/">Review</a></div>{% empty %}<p>No APTIQ attempt.</p>{% endfor %}</div></div>
+<section class="admin-panel"><div class="admin-panel-head"><div><span>SUBMISSIONS</span><h2>Evidence package</h2></div></div><div class="submission-cards">{% for s in submissions %}<a class="submission-row" href="/organizer/submission/{{ s.id }}/"><div><span>{{ s.get_arena_display }}</span><strong>{{ s.topic }}</strong><small>{{ s.created|date:"d M Y · H:i" }}</small></div><b>{{ s.status }}</b></a>{% empty %}<p>No submissions.</p>{% endfor %}</div></section>
+<section class="admin-panel"><div class="admin-panel-head"><div><span>MONITOR LOG</span><h2>Browser signals</h2></div></div><div class="monitor-log">{% for e in events %}<div><time>{{ e.created|date:"d M Y · H:i:s" }}</time><strong>{{ e.get_event_type_display }}</strong><span>{{ e.detail }}</span></div>{% empty %}<p>No monitor events recorded.</p>{% endfor %}</div></section>
+
+{% elif page == 'organizer_submission' %}
+<section class="admin-top compact"><div><a class="table-link" href="/organizer/participant/{{ submission.participant.id }}/">Back to participant</a><div class="kicker">{{ submission.get_arena_display }}</div><h1>Submission <em>review.</em></h1><p>{{ submission.participant.name }} · {{ submission.topic }}</p></div></section>
+<section class="review-layout"><div class="admin-panel"><div class="kicker">UPLOADED EVIDENCE</div><h2>Files</h2>{% for u in submission.uploads.all %}<div class="file-row"><div><strong>{{ u.kind|title }}</strong><small>{{ u.file.name|cut:"submissions/" }}</small></div><a class="btn btn-quiet" href="/organizer/download/{{ u.id }}/">Download</a></div>{% empty %}<p>No files.</p>{% endfor %}<div class="description-box"><span>Participant notes</span><p>{{ submission.description|default:"No notes supplied." }}</p></div></div>
+<section class="admin-panel"><div class="kicker">EVALUATION</div><h2>Score & feedback</h2><form method="post">{% csrf_token %}<label>Status<select name="status"><option {% if submission.status == "Submitted" %}selected{% endif %}>Submitted</option><option {% if submission.status == "In review" %}selected{% endif %}>In review</option><option {% if submission.status == "Reviewed" %}selected{% endif %}>Reviewed</option><option {% if submission.status == "Accepted" %}selected{% endif %}>Accepted</option><option {% if submission.status == "Needs revision" %}selected{% endif %}>Needs revision</option></select></label><div class="upload-grid"><label>Score<input type="number" name="score" min="0" value="{{ submission.score|default_if_none:'' }}"></label><label>Maximum<input type="number" name="max_score" min="1" value="{{ submission.max_score|default_if_none:'' }}"></label></div><label>Feedback<textarea name="feedback" rows="9">{{ submission.feedback }}</textarea></label><button class="btn btn-primary">Save evaluation</button></form></section></section>
+
+{% elif page == 'organizer_attempt' %}
+<section class="admin-top compact"><div><a class="table-link" href="/organizer/participant/{{ attempt.participant.id }}/">Back to participant</a><div class="kicker">APTIQ / ANSWER REVIEW</div><h1>{{ attempt.participant.name }} · <em>{{ attempt.final_score }}/40</em></h1><p>Automated score {{ attempt.score }}/40 · monitor flags {{ attempt.violations }}</p></div></section>
+<section class="review-layout"><div class="admin-panel"><div class="kicker">ANSWER SHEET</div><h2>Question-by-question review</h2><div class="answer-review">{% for q in questions %}<div class="answer-item"><div><span>Q{{ q.order }} · {% if q.round == 1 %}AI{% else %}LOGIC{% endif %}</span><strong>{{ q.prompt }}</strong><small>Participant: {{ attempt.answers|get_item:q.id|default:"Not answered" }} · Correct: {{ q.correct }}</small></div><b>{% if attempt.answers|get_item:q.id == q.correct %}+1{% else %}0{% endif %}</b></div>{% endfor %}</div></div>
+<section class="admin-panel"><div class="kicker">ORGANIZER OVERRIDE</div><h2>Finalize assessment</h2><form method="post">{% csrf_token %}<label>Manual score <span class="optional">optional</span><input type="number" name="manual_score" min="0" max="40" value="{{ attempt.manual_score|default_if_none:'' }}"></label><label>Review notes<textarea name="review_notes" rows="10">{{ attempt.review_notes }}</textarea></label><button class="btn btn-primary">Save APTIQ review</button></form></section></section>
+{% endif %}
+</main>
+
+<footer><span>ARVEXA 2026</span><span>Conducted by Quadrafroyn Solutions</span><span>Precision. Creativity. Evidence.</span></footer>
+<script src="{% static 'app.js' %}" defer></script>
+</body>
+</html>

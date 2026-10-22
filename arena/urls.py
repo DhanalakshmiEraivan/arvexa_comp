@@ -1,0 +1,31 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("join/", views.join, name="join"),
+    path("logout/", views.logout_participant, name="logout_participant"),
+    path("arenas/", views.arenas, name="arenas"),
+    path("aptiq/", views.aptiq, name="aptiq"),
+    path("aptiq/start/", views.start, name="start"),
+    path("aptiq/test/", views.test, name="test"),
+    path("aptiq/save/", views.save, name="save"),
+    path("aptiq/finish/", views.finish, name="finish"),
+    path("webphobia/", views.web, name="web"),
+    path("webphobia/assign/", views.assign_web_topic, name="assign_web_topic"),
+    path("webphobia/submit/", views.submit_web, name="submit_web"),
+    path("problem-to-solution/", views.pts, name="pts"),
+    path("problem-to-solution/idea/", views.idea, name="idea"),
+    path("problem-to-solution/prototype/", views.prototype, name="prototype"),
+    path("complete/", views.complete, name="complete"),
+    path("api/heartbeat/", views.heartbeat, name="heartbeat"),
+    path("organizer/", views.organizer_login, name="organizer_login"),
+    path("organizer/login/", views.organizer_login, name="organizer_login_alias"),
+    path("organizer/logout/", views.organizer_logout, name="organizer_logout"),
+    path("organizer/dashboard/", views.organizer_dashboard, name="organizer_dashboard"),
+    path("organizer/export/participants.csv", views.organizer_export_participants, name="organizer_export_participants"),
+    path("organizer/participant/<int:pk>/", views.organizer_participant, name="organizer_participant"),
+    path("organizer/submission/<int:pk>/", views.organizer_submission, name="organizer_submission"),
+    path("organizer/attempt/<int:pk>/", views.organizer_attempt, name="organizer_attempt"),
+    path("organizer/download/<int:pk>/", views.download_upload, name="download_upload"),
+]
