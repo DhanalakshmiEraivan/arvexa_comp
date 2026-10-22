@@ -4,7 +4,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "arvexa-2026-change-me-in-production")
-DEBUG = os.environ.get("DEBUG", "1") == "1"
+DEBUG = os.environ.get("DEBUG", "0") == "1"
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,arvexacomp-279oroj9g-dhalak65-1604s-projects.vercel.app,arvexacomp.vercel.app").split(",") if h.strip()]
 CSRF_TRUSTED_ORIGINS = [v.strip() for v in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if v.strip()]
 
@@ -48,9 +48,14 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 import os
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is missing.")
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=None,
+    "default": dj_database_url.parse(
+        DATABASE_URL,
         conn_max_age=600,
         ssl_require=True,
     )
