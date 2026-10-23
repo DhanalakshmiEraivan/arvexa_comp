@@ -184,6 +184,7 @@ def assign_web_topic(request):
         request.session.modified = True
     return JsonResponse({"topic": assigned})
 
+
 def upload_submission(request, arena, topic, fields):
     p = guard(request)
     if not p:
@@ -194,47 +195,62 @@ def upload_submission(request, arena, topic, fields):
         return page(request, "error", error="Choose a valid topic or theme first.")
     if not all(request.FILES.get(k) for k in fields):
         return page(request, "error", error="All required files must be uploaded.")
+
     limits = {
-        "video": 150 * 1024 * 1024, "code": 40 * 1024 * 1024, "ppt": 30 * 1024 * 1024,
-        "prototype": 75 * 1024 * 1024, "architecture": 30 * 1024 * 1024, "solution": 30 * 1024 * 1024,
+        "video": 150 * 1024 * 1024,
+        "code": 40 * 1024 * 1024,
+        "ppt": 30 * 1024 * 1024,
+        "prototype": 75 * 1024 * 1024,
+        "architecture": 30 * 1024 * 1024,
+        "solution": 30 * 1024 * 1024,
     }
+
     allowed = {
-        "video": (".mp4", ".webm", ".mov"), "code": (".zip",), "ppt": (".ppt", ".pptx", ".pdf"),
-        "prototype": (".pdf", ".ppt", ".pptx", ".doc", ".docx", ".png", ".jpg", ".jpeg", ".mp4", ".webm", ".zip"),
-        "architecture": (".pdf", ".ppt", ".pptx", ".doc", ".docx", ".png", ".jpg", ".jpeg", ".mp4", ".webm", ".zip"),
-        "solution": (".pdf", ".ppt", ".pptx", ".doc", ".docx", ".png", ".jpg", ".jpeg", ".mp4", ".webm", ".zip"),
+        "video": (".mp4", ".webm", ".mov"),
+        "code": (".zip",),
+        "ppt": (".ppt", ".pptx", ".pdf"),
+        "prototype": (
+            ".pdf", ".ppt", ".pptx", ".doc", ".docx",
+            ".png", ".jpg", ".jpeg", ".mp4", ".webm", ".zip"
+        ),
+        "architecture": (
+            ".pdf", ".ppt", ".pptx", ".doc", ".docx",
+            ".png", ".jpg", ".jpeg", ".mp4", ".webm", ".zip"
+        ),
+        "solution": (
+            ".pdf", ".ppt", ".pptx", ".doc", ".docx",
+            ".png", ".jpg", ".jpeg", ".mp4", ".webm", ".zip"
+        ),
     }
+
     for kind in fields:
         f = request.FILES[kind]
         if f.size > limits[kind] or not f.name.lower().endswith(allowed[kind]):
-            return page(request, "error", error=f"Invalid file or file too large: {kind}.")
+            return page(
+                request,
+                "error",
+                error=f"Invalid file or file too large: {kind}."
+            )
+
     with transaction.atomic():
         submission, _ = Submission.objects.update_or_create(
             participant=p,
             arena=arena,
-            defaults={"topic": topic[:200], "description": request.POST.get("description", "")[:5000]},
+            defaults={
+                "topic": topic[:200],
+                "description": request.POST.get("description", "")[:5000],
+            },
         )
+
         submission.uploads.all().delete()
+
         for kind in fields:
-            f = request.FILES[kind]
+            Upload.objects.create(
+                submission=submission,
+                kind=kind,
+                file=request.FILES[kind],
+            )
 
-uploaded = blob.put_blob(
-    f"submissions/{submission.id}/{kind}/{f.name}",
-    f.file,
-    access="private",
-    content_length=f.size,
-    content_type=f.content_type or "application/octet-stream",
-    add_random_suffix=True,
-)
-
-Upload.objects.create(
-    submission=submission,
-    kind=kind,
-    blob_url=uploaded.url,
-    blob_path=uploaded.pathname,
-    original_name=f.name,
-    content_type=f.content_type or "application/octet-stream",
-)
     return redirect("prototype" if arena == "pts1" else "arenas")
 
 def submit_web(request):
