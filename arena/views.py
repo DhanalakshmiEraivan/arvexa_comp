@@ -2,7 +2,7 @@ import csv
 import json
 import secrets
 from functools import wraps
-
+from vercel.blob import sync as blob
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
@@ -216,7 +216,25 @@ def upload_submission(request, arena, topic, fields):
         )
         submission.uploads.all().delete()
         for kind in fields:
-            Upload.objects.create(submission=submission, kind=kind, file=request.FILES[kind])
+            f = request.FILES[kind]
+
+uploaded = blob.put_blob(
+    f"submissions/{submission.id}/{kind}/{f.name}",
+    f.file,
+    access="private",
+    content_length=f.size,
+    content_type=f.content_type or "application/octet-stream",
+    add_random_suffix=True,
+)
+
+Upload.objects.create(
+    submission=submission,
+    kind=kind,
+    blob_url=uploaded.url,
+    blob_path=uploaded.pathname,
+    original_name=f.name,
+    content_type=f.content_type or "application/octet-stream",
+)
     return redirect("prototype" if arena == "pts1" else "arenas")
 
 def submit_web(request):
