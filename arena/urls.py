@@ -28,4 +28,9 @@ urlpatterns = [
     path("organizer/submission/<int:pk>/", views.organizer_submission, name="organizer_submission"),
     path("organizer/attempt/<int:pk>/", views.organizer_attempt, name="organizer_attempt"),
     path("organizer/download/<int:pk>/", views.download_upload, name="download_upload"),
+    path(
+    "problem-to-solution/idea/save-upload/",
+    views.save_blob_upload,
+    name="save_blob_upload",
+)
 ]
