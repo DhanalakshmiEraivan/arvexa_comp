@@ -333,12 +333,36 @@ def pts(request):
 def idea(request):
     if not guard(request):
         return redirect("join")
+
     if request.method == "POST":
         topic = request.POST.get("topic", "")
-        valid = [f"{code} · {theme}" for code, theme in THEMES]
+
+        valid = [
+            f"{code} · {theme}"
+            for code, theme in THEMES
+        ]
+
         if topic not in valid:
-            return page(request, "error", error="Select one official theme.")
-        return upload_submission(request, "pts1", topic, ["ppt"])
+            return page(
+                request,
+                "error",
+                error="Select one official theme.",
+            )
+
+        submission, _ = Submission.objects.update_or_create(
+            participant=guard(request),
+            arena="pts1",
+            defaults={
+                "topic": topic[:200],
+                "description": request.POST.get(
+                    "description",
+                    "",
+                )[:5000],
+            },
+        )
+
+        return redirect("prototype")
+
     return page(request, "idea")
 
 def prototype(request):
