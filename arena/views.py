@@ -10,7 +10,7 @@ from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-
+from django.http import JsonResponse
 from .models import Attempt, MonitorEvent, Participant, Question, Submission, Upload
 
 TOPICS = [
@@ -264,7 +264,67 @@ def submit_web(request):
             return page(request, "error", error="This submission must use the topic assigned to your participant session.")
         return upload_submission(request, "web", topic, ["video", "code"])
     return page(request, "submit_web", topic=request.session.get("web_topic", ""))
+def save_blob_upload(request):
+    p = guard(request)
 
+    if not p:
+        return JsonResponse(
+            {"error": "Participant session expired."},
+            status=401,
+        )
+
+    if request.method != "POST":
+        return JsonResponse(
+            {"error": "POST required."},
+            status=405,
+        )
+
+    blob_url = request.POST.get("blob_url", "").strip()
+    blob_path = request.POST.get("blob_path", "").strip()
+    original_name = request.POST.get("original_name", "").strip()
+    content_type = request.POST.get("content_type", "").strip()
+    file_size = request.POST.get("file_size", "0").strip()
+
+    if not blob_url or not blob_path or not original_name:
+        return JsonResponse(
+            {"error": "Missing Blob upload information."},
+            status=400,
+        )
+
+    try:
+        file_size = int(file_size)
+    except (TypeError, ValueError):
+        return JsonResponse(
+            {"error": "Invalid file size."},
+            status=400,
+        )
+
+    submission = Submission.objects.filter(
+        participant=p,
+        arena="pts1",
+    ).first()
+
+    if not submission:
+        return JsonResponse(
+            {"error": "Submit the Idea details first."},
+            status=400,
+        )
+
+    submission.uploads.filter(kind="ppt").delete()
+
+    Upload.objects.create(
+        submission=submission,
+        kind="ppt",
+        blob_url=blob_url,
+        blob_path=blob_path,
+        original_name=original_name,
+        content_type=content_type,
+        file_size=file_size,
+    )
+
+    return JsonResponse({
+        "success": True,
+    })
 def pts(request):
     if not guard(request):
         return redirect("join")
