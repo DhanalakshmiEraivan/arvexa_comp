@@ -56,19 +56,27 @@ class Submission(models.Model):
 
 
 class Upload(models.Model):
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name="uploads")
-    file = models.FileField(upload_to="submissions/%Y/%m/", blank=True, null=True)
-    blob_url = models.URLField(blank=True)
-    blob_path = models.CharField(max_length=1000, blank=True)
-    original_name = models.CharField(max_length=500, blank=True)
-    content_type = models.CharField(max_length=200, blank=True)
+    submission = models.ForeignKey(
+        Submission,
+        on_delete=models.CASCADE,
+        related_name="uploads",
+    )
+    file = models.FileField(
+        upload_to="submissions/%Y/%m/",
+        null=True,
+        blank=True,
+    )
     kind = models.CharField(max_length=50)
+
+    blob_path = models.CharField(max_length=500, blank=True)
+    blob_url = models.URLField(max_length=2000, blank=True)
+    original_name = models.CharField(max_length=255, blank=True)
+    content_type = models.CharField(max_length=255, blank=True)
+    file_size = models.BigIntegerField(default=0)
 
     def __str__(self):
         return f"{self.kind}: {self.original_name or self.file.name}"
-
-    def __str__(self):
-        return f"{self.kind}: {self.file.name}"
+        
 
 
 class Question(models.Model):
