@@ -149,6 +149,102 @@
 <section class="visual-strip"><div><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85" alt="Product planning workspace"></div><div><div class="kicker">THE STANDARD</div><h2>From concept to evidence.</h2><p>No shortlist gate. Once the idea is submitted, the participant can proceed directly to the final evidence package. Organizer review happens after submission.</p><a class="btn btn-quiet" href="/problem-to-solution/idea/">Start the journey</a></div></section>
 
 {% elif page == 'idea' %}
+  <script type="module">
+import { upload } from "https://cdn.jsdelivr.net/npm/@vercel/blob/+esm";
+
+window.uploadIdeaPpt = async function (form) {
+    const fileInput = form.querySelector('input[name="ppt"]');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const status = document.getElementById("upload-status");
+
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select your PPT/PDF file.");
+        return false;
+    }
+
+    const allowedTypes = [
+        "application/pdf",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+        alert("Please upload a PDF, PPT, or PPTX file.");
+        return false;
+    }
+
+    if (file.size > 30 * 1024 * 1024) {
+        alert("The file must be 30 MB or smaller.");
+        return false;
+    }
+
+    submitButton.disabled = true;
+    status.textContent = "Uploading your file...";
+
+    try {
+        const blob = await upload(
+            `submissions/${Date.now()}-${file.name}`,
+            file,
+            {
+                access: "private",
+                handleUploadUrl: "/api/blob-upload",
+                multipart: true,
+            }
+        );
+
+        status.textContent = "Saving submission...";
+
+        const data = new FormData(form);
+
+        data.delete("ppt");
+
+        data.append("blob_url", blob.url);
+        data.append("blob_path", blob.pathname);
+        data.append("original_name", file.name);
+        data.append("content_type", file.type);
+        data.append("file_size", String(file.size));
+
+        const response = await fetch(
+            "/problem-to-solution/idea/save-upload/",
+            {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": data.get("csrfmiddlewaretoken"),
+                },
+                body: data,
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.error || "Unable to save submission."
+            );
+        }
+
+        status.textContent = "Upload complete.";
+
+        window.location.href = "/problem-to-solution/prototype/";
+
+    } catch (error) {
+        console.error(error);
+
+        status.textContent = "";
+
+        alert(
+            error.message ||
+            "Upload failed. Please try again."
+        );
+
+        submitButton.disabled = false;
+    }
+
+    return false;
+};
+</script>
 <section class="form-page desktop-form"><div class="kicker">PROBLEM TO SOLUTION / 01</div><h1>Select one <em>theme.</em></h1><p>Choose the problem domain that will anchor your solution. There is no shortlist stage in this flow.</p>
 <div class="theme-grid">{% for code,theme in themes %}<article><span>{{ code }}</span><h3>{{ theme }}</h3><p>Define the user, pain point, constraints, novelty, feasibility and expected impact.</p></article>{% endfor %}</div>
 <section class="form-card wide"><form method="post" enctype="multipart/form-data">{% csrf_token %}<label>Official theme *<select name="topic" required><option value="">Choose one theme</option>{% for code,theme in themes %}<option value="{{ code }} · {{ theme }}">{{ code }} · {{ theme }}</option>{% endfor %}</select></label><label>Problem + solution brief *<textarea name="description" rows="7" required placeholder="Problem, users, solution, novelty, feasibility, impact and key assumptions."></textarea></label><label>Idea presentation *<input type="file" name="ppt" accept=".ppt,.pptx,.pdf" required><small>PPT, PPTX or PDF · max 30 MB</small></label><button class="btn btn-primary">Submit idea and continue</button></form></section></section>
