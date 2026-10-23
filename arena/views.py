@@ -416,12 +416,22 @@ def organizer_attempt(request, pk):
 
 @organizer_required
 def download_upload(request, pk):
-    upload = get_object_or_404(Upload.objects.select_related("submission__participant"), pk=pk)
-    try:
-        filename = upload.file.name.split("/")[-1]
-        return FileResponse(upload.file.open("rb"), as_attachment=True, filename=filename)
-    except FileNotFoundError:
-        raise Http404("The stored upload is not available.")
+    if not request.session.get("organizer"):
+        return redirect("organizer_login")
+
+    upload = get_object_or_404(Upload, pk=pk)
+
+    if upload.blob_url:
+        return redirect(upload.blob_url)
+
+    if upload.file:
+        return FileResponse(
+            upload.file.open("rb"),
+            as_attachment=True,
+            filename=upload.file.name.split("/")[-1],
+        )
+
+    return page(request, "error", error="Uploaded file is unavailable.")
 
 def logout_participant(request):
     request.session.pop("participant_token", None)
