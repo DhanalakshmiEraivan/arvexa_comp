@@ -68,14 +68,29 @@ class Upload(models.Model):
     )
     kind = models.CharField(max_length=50)
 
-    blob_path = models.CharField(max_length=500, blank=True)
-    blob_url = models.URLField(max_length=2000, blank=True)
-    original_name = models.CharField(max_length=255, blank=True)
-    content_type = models.CharField(max_length=255, blank=True)
-    file_size = models.BigIntegerField(default=0)
+    blob_path = models.CharField(
+        max_length=500,
+        blank=True,
+    )
+    blob_url = models.URLField(
+        max_length=2000,
+        blank=True,
+    )
+    original_name = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+    content_type = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+    file_size = models.BigIntegerField(
+        default=0,
+    )
 
     def __str__(self):
         return f"{self.kind}: {self.original_name or self.file.name}"
+   
         
 
 
