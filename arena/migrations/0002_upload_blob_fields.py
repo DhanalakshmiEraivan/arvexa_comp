@@ -8,27 +8,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-        
-            model_name="upload",
-            name="blob_url",
-            field=models.URLField(blank=True),
-        ),
-        migrations.AddField(
-            model_name="upload",
-            name="blob_path",
-            field=models.CharField(max_length=1000, blank=True),
-        ),
-        migrations.AddField(
-            model_name="upload",
-            name="original_name",
-            field=models.CharField(max_length=500, blank=True),
-        ),
-        migrations.AddField(
-            model_name="upload",
-            name="content_type",
-            field=models.CharField(max_length=200, blank=True),
-        ),
         migrations.AlterField(
             model_name="upload",
             name="file",
@@ -38,4 +17,44 @@ class Migration(migrations.Migration):
                 upload_to="submissions/%Y/%m/",
             ),
         ),
+        migrations.AddField(
+            model_name="upload",
+            name="blob_path",
+            field=models.CharField(
+                blank=True,
+                max_length=500,
+            ),
+        ),
+        migrations.AddField(
+            model_name="upload",
+            name="blob_url",
+            field=models.URLField(
+                blank=True,
+                max_length=2000,
+            ),
+        ),
+        migrations.AddField(
+            model_name="upload",
+            name="original_name",
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+            ),
+        ),
+        migrations.AddField(
+            model_name="upload",
+            name="content_type",
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+            ),
+        ),
+        migrations.AddField(
+            model_name="upload",
+            name="file_size",
+            field=models.BigIntegerField(
+                default=0,
+            ),
+        ),
     ]
+    
